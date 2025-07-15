@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { assets } from '../assets/assets'
 import { MenuIcon, SearchIcon, TicketPlus, XIcon } from 'lucide-react'
 import { useClerk, UserButton, useUser } from '@clerk/clerk-react'
+import { useAppContext } from '../context/AppContext'
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -11,6 +12,7 @@ const Navbar = () => {
   const { openSignIn } = useClerk()
   const navigate = useNavigate()
   const navLinkClass = "hover:text-primary transition-colors duration-300"
+  const { favoriteMovies } = useAppContext();
 
   function handleLinkClick() {
     scrollTo(0, 0)
@@ -55,9 +57,10 @@ const Navbar = () => {
         <XIcon className='lg:hidden absolute top-6 right-6 w-6 h-6 cursor-pointer' onClick={() => setIsOpen(!isOpen)} />
         <Link to="/" onClick={handleLinkClick} className={navLinkClass}>Home</Link>
         <Link to="/movies" onClick={handleLinkClick} className={navLinkClass}>Movies</Link>
-        <Link to="/" onClick={handleLinkClick} className={navLinkClass}>Theaters</Link>
+        {!user && <Link to="/" onClick={handleLinkClick} className={navLinkClass}>Theaters</Link>}
         <Link to="/" onClick={handleLinkClick} className={navLinkClass}>Releases</Link>
-        <Link to="/favorite" onClick={handleLinkClick} className={navLinkClass}>Favorites</Link>
+        {favoriteMovies.length > 0 && <Link to="/favorite" onClick={handleLinkClick} className={navLinkClass}>Favorites</Link>}
+        {user && <Link to="/my-bookings" onClick={handleLinkClick} className={navLinkClass}>Bookings</Link>}
       </div>
 
       <div className='flex items-center gap-8'>

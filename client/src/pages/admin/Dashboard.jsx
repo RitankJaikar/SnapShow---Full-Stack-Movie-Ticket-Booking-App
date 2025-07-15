@@ -4,8 +4,11 @@ import React, { useEffect, useState } from 'react'
 import { BlurCircle, Loading } from '../../components';
 import { Title } from '../../components/admin';
 import dateFormat from '../../lib/dateFormat';
+import { useAppContext } from '../../context/AppContext';
 
 const Dashboard = () => {
+  const { axios, getToken, user, image_base_url } = useAppContext();
+
   const currency = import.meta.env.VITE_CURRENCY
 
   const [dashboardData, setDashboardData] = useState({
@@ -25,13 +28,28 @@ const Dashboard = () => {
   ]
 
   const fetchDashboardData = async () => {
-    setDashboardData(dummyDashboardData)
-    setLoading(false)
+    // setDashboardData(dummyDashboardData);
+    // setLoading(false);
+
+    try {
+      const { data } = await axios.get("/api/admin/dashboard", { headers: { Authorization: `Bearer ${await getToken()}` } });
+
+      if (data.success) {
+        setDashboardData(data.dashboardData);
+        setLoading(false);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard data: ", error);
+    }
   };
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    if(user) {
+      fetchDashboardData();
+    }
+  }, [user]);
 
   return !loading ? (
     <>
@@ -56,9 +74,11 @@ const Dashboard = () => {
       <p className="mt-10 text-lg font-medium">Active Shows</p>
       <div className="relative flex flex-wrap gap-6 mt-4 max-w-5xl">
         <BlurCircle top="100px" right="10%" />
-        {dashboardData.activeShows.map((show) => (
+        {dashboardData.activeShows
+        .sort((a, b) => a.movie.title.localeCompare(b.movie.title))
+        .map(show => (
           <div key={show._id} className="w-48.5 rounded-lg overflow-hidden h-full pb-3 bg-primary/10 border border-primary/20 hover:-translate-y-1 transition duration-300">
-            <img src={show.movie.poster_path} alt='' className="h-60 w-full object-cover" />
+            <img src={image_base_url + show.movie.poster_path} alt='' className="h-60 w-full object-cover" />
             <p className="font-medium p-2 truncate">{show.movie.title}</p>
             <div className="flex items-center justify-between px-2">
               <p className="text-lg font-medium">{currency} {show.showPrice}</p>
