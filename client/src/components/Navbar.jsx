@@ -57,10 +57,10 @@ const Navbar = () => {
         <XIcon className='lg:hidden absolute top-6 right-6 w-6 h-6 cursor-pointer' onClick={() => setIsOpen(!isOpen)} />
         <Link to="/" onClick={handleLinkClick} className={navLinkClass}>Home</Link>
         <Link to="/movies" onClick={handleLinkClick} className={navLinkClass}>Movies</Link>
-        {!user && <Link to="/" onClick={handleLinkClick} className={navLinkClass}>Theaters</Link>}
+        <Link to="/" onClick={handleLinkClick} className={navLinkClass}>Theaters</Link>
         <Link to="/" onClick={handleLinkClick} className={navLinkClass}>Releases</Link>
         {favoriteMovies.length > 0 && <Link to="/favorite" onClick={handleLinkClick} className={navLinkClass}>Favorites</Link>}
-        {user && <Link to="/my-bookings" onClick={handleLinkClick} className={navLinkClass}>Bookings</Link>}
+        {/* {user && <Link to="/my-bookings" onClick={handleLinkClick} className={navLinkClass}>Bookings</Link>} */}
       </div>
 
       <div className='flex items-center gap-8'>
