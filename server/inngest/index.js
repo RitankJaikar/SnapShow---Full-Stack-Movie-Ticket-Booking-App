@@ -2,7 +2,11 @@ import { Inngest } from "inngest";
 import User from "../models/User.js";
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
-import sendEmail, { getBookingConfirmationEmail } from "../configs/nodemailer.js";
+import sendEmail, {
+  getBookingConfirmationEmail,
+  getNewShowAnnouncementEmail,
+  getReminderEmailBody,
+} from "../configs/nodemailer.js";
 
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "my-app" });
@@ -98,8 +102,111 @@ const sendBookingConfirmationEmail = inngest.createFunction(
     await sendEmail({
       to: booking.user.email,
       subject: `Payment Confirmation: "${booking.show.movie.title}" booked!`,
-      body: getBookingConfirmationEmail(booking)
+      body: getBookingConfirmationEmail(booking),
     });
+  }
+);
+
+// Inngest Function to send reminders
+const sendShowReminders = inngest.createFunction(
+  { id: "send-show-reminders" },
+  { cron: "0 */8 * * *" }, // Every 8 hours
+  async ({ step }) => {
+    const now = new Date();
+    const in8Hours = new Date(now.getTime() + 8 * 60 * 60 * 1000); // 8 hours ahead
+    const windowStart = new Date(now.getTime() + 7.5 * 60 * 60 * 1000); // buffer of 30 min before
+
+    // Prepare reminder tasks
+    const reminderTasks = await step.run("prepare-reminder-tasks", async () => {
+      const shows = await Show.find({
+        showTime: { $gte: windowStart, $lte: in8Hours },
+      }).populate("movie");
+
+      const tasks = [];
+
+      for (const show of shows) {
+        if (!show.movie || !show.occupiedSeats) continue;
+
+        const userIds = [...new Set(Object.values(show.occupiedSeats))];
+        if (userIds.length === 0) continue;
+
+        const users = await User.find({ _id: { $in: userIds } }).select(
+          "name email"
+        );
+
+        for (const user of users) {
+          tasks.push({
+            userEmail: user.email,
+            userName: user.name,
+            movieTitle: show.movie.title,
+            showTime: show.showTime,
+          });
+        }
+      }
+
+      return tasks;
+    });
+
+    if (reminderTasks.length === 0) {
+      return { sent: 0, message: "No reminders to send." };
+    }
+
+    // Send reminder emails
+    const results = await step.run("send-all-reminders", async () => {
+      return await Promise.allSettled(
+        reminderTasks.map((task) =>
+          sendEmail({
+            to: task.userEmail,
+            subject: `Reminder: Your movie "${task.movieTitle}" starts soon!`,
+            body: getReminderEmailBody(task),
+          })
+        )
+      );
+    });
+
+    const sent = results.filter((r) => r.status === "fulfilled").length;
+    const failed = results.length - sent;
+
+    return {
+      sent,
+      failed,
+      message: `Sent ${sent} reminder(s), ${failed} failed.`,
+    };
+  }
+);
+
+// Inngest Function to send notifications when a new show is added
+const sendNewShowNotifications = inngest.createFunction(
+  { id: "send-new-show-notifications" },
+  { event: "app/show.added" },
+  async ({ event, step }) => {
+    const { movieTitle } = event.data;
+
+    // 1. Fetch all users
+    const users = await step.run("fetch-all-users", async () => {
+      return await User.find({}).select("name email");
+    });
+
+    // 2. Prepare email tasks
+    const emailTasks = users.map((user) => ({
+      to: user.email,
+      subject: `🎬 New Show Added: ${movieTitle}`,
+      body: getNewShowAnnouncementEmail({ userName: user.name, movieTitle }),
+    }));
+
+    // 3. Send all emails concurrently with error handling
+    const results = await step.run("send-notifications", async () => {
+      return await Promise.allSettled(emailTasks.map(task => sendEmail(task)));
+    });
+
+    const sent = results.filter(r => r.status === "fulfilled").length;
+    const failed = results.length - sent;
+
+    return {
+      message: `Notifications sent to ${sent} users. ${failed} failed.`,
+      sent,
+      failed
+    };
   }
 );
 
@@ -109,5 +216,7 @@ export const functions = [
   syncUserDeletion,
   syncUserUpdation,
   releaseSeatsAndDeleteBooking,
-  sendBookingConfirmationEmail
+  sendBookingConfirmationEmail,
+  sendShowReminders,
+  sendNewShowNotifications,
 ];

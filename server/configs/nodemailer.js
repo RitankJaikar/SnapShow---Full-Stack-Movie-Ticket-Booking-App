@@ -33,8 +33,6 @@ export const getBookingConfirmationEmail = (booking) => {
     timeZone: "Asia/Kolkata",
   });
 
-  console.log(booking);
-
   return `
     <div style="font-family: Arial, sans-serif; line-height: 1.5;">
       <h2>Hi ${booking.user.name},</h2>
@@ -47,6 +45,48 @@ export const getBookingConfirmationEmail = (booking) => {
       <p>Thanks for booking with us!</p>
       <hr style="margin: 20px 0;"/>
       <p style="color: gray;">– SnapShow Team</p>
+    </div>
+  `;
+};
+
+export const getReminderEmailBody = (task) => {
+  const showDate = new Date(task.showTime).toLocaleDateString('en-US', {
+    timeZone: 'Asia/Kolkata',
+  });
+
+  const showTime = new Date(task.showTime).toLocaleTimeString('en-US', {
+    timeZone: 'Asia/Kolkata',
+  });
+
+  return `
+    <div style="font-family: Arial, sans-serif; padding: 20px;">
+      <h2>Hello ${task.userName},</h2>
+      <p>This is a quick reminder that your movie:</p>
+      <h3 style="color: #F84565;">"${task.movieTitle}"</h3>
+      <p>
+        is scheduled for <strong>${showDate}</strong> at
+        <strong>${showTime}</strong>.
+      </p>
+      <p>
+        It starts in approximately <strong>8 hours</strong>, make sure you're ready!
+      </p>
+      <br/>
+      <p>Enjoy the show!</p>
+      <hr style="margin: 20px 0;" />
+      <p style="color: gray;">– SnapShow Team</p>
+    </div>
+  `;
+};
+
+export const getNewShowAnnouncementEmail = ({ userName, movieTitle }) => {
+  return `
+    <div style="font-family: Arial, sans-serif; padding: 20px;">
+      <h2>Hi ${userName},</h2>
+      <p>We've just added a new show to our library:</p>
+      <h3 style="color: #F84565;">"${movieTitle}"</h3>
+      <p>Visit our website to explore it now!</p>
+      <br/>
+      <p>Thanks,<br/>QuickShow Team</p>
     </div>
   `;
 };
