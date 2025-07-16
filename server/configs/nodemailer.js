@@ -46,7 +46,7 @@ export const getBookingConfirmationEmail = (booking) => {
       <p>Enjoy the show! 🎬</p>
       <p>Thanks for booking with us!</p>
       <hr style="margin: 20px 0;"/>
-      <p style="color: gray;">– QuickShow Team</p>
+      <p style="color: gray;">– SnapShow Team</p>
     </div>
   `;
 };
