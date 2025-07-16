@@ -10,13 +10,18 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmail = async ({ to, subject, body }) => {
-  const response = await transporter.sendMail({
-    from: process.env.SENDER_EMAIL,
-    to,
-    subject,
-    html: body,
-  });
-  return response;
+  try {
+    const response = await transporter.sendMail({
+      from: process.env.SENDER_EMAIL,
+      to,
+      subject,
+      html: body,
+    });
+    return response;
+  } catch (error) {
+    console.error("Email sending failed:", error);
+    throw new Error("Failed to send email");
+  }
 };
 
 export const getBookingConfirmationEmail = (booking) => {
