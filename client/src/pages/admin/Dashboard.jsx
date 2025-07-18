@@ -77,8 +77,8 @@ const Dashboard = () => {
         {dashboardData.activeShows
         .sort((a, b) => a.movie.title.localeCompare(b.movie.title))
         .map(show => (
-          <div key={show._id} className="w-48.5 rounded-lg overflow-hidden h-full pb-3 bg-primary/10 border border-primary/20 hover:-translate-y-1 transition duration-300">
-            <img src={image_base_url + show.movie.poster_path} alt='' className="h-60 w-full object-cover" />
+          <div key={show._id} className="w-48.5 max-sm:w-60 rounded-lg overflow-hidden h-full pb-3 bg-primary/10 border border-primary/20 hover:-translate-y-1 transition duration-300">
+            <img src={image_base_url + show.movie.poster_path} alt='' className="h-60 max-sm:h-75 w-full object-cover" />
             <p className="font-medium p-2 truncate">{show.movie.title}</p>
             <div className="flex items-center justify-between px-2">
               <p className="text-lg font-medium">{currency} {show.showPrice}</p>
