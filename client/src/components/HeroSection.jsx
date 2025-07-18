@@ -11,7 +11,7 @@ const HeroSection = () => {
             <img src={assets.marvelLogo} alt="" className="max-h-11 lg:h-11 mt-20" />
             <h1 className='text-5x1 md:text-[70px] md:leading-18 font-semibold max-w-110'>Guardians <br /> of the Galaxy</h1>
             <div className='flex items-center gap-4 text-gray-300 flex-wrap'>
-                <span>Action | Adventure | Sci-Fi</span> I
+                <span>Action | Adventure | Sci-Fi</span>
                 <div className='flex items-center gap-1'>
                     <CalendarIcon className='w-4.5 h-4.5' /> 2018
                 </div>

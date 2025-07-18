@@ -46,7 +46,7 @@ const Navbar = () => {
   return (
     <div className='fixed top-0 left-0 z-50 w-full flex items-center justify-between px-6 lg:px-16 xl:px-36 py-5'>
       <Link to="/" className='max-lg:flex-1'>
-        <img src={assets.logo} alt="SnapShow" className='w-36 h-auto' />
+        <img src={assets.logo} alt="SnapShow" className='w-40 h-auto' />
       </Link>
 
       <div className={`max-lg:absolute max-lg:top-0 max-lg:left-0 max-lg:font-medium max-lg:text-lg z-50 flex flex-col lg:flex-row items-center max-lg:justify-center gap-8 min-lg:px-8 py-3 max-lg:h-screen min-lg:rounded-full backdrop-blur bg-black/70 lg:bg-white/10 lg:border border-gray-300/20 overflow-hidden 
