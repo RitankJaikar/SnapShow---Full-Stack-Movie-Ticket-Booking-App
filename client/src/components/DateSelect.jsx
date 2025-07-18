@@ -18,12 +18,12 @@ const DateSelect = ({ dateTime, id }) => {
 
     return (
         <div id='dateSelect' className='pt-30'>
-            <div className='flex flex-col md:flex-row items-center justify-between gap-10 relative p-8 bg-primary/10 border border-primary/20 rounded-lg'>
+            <div className='flex flex-col md:flex-row items-center justify-between md:gap-10 gap-2 relative md:p-8 p-6 bg-primary/10 border border-primary/20 rounded-lg'>
                 <BlurCircle top="-100px" left="-100px" />
                 <BlurCircle bottom="-100px" right="-100px" />
                 <div>
                     <p className='text-lg font-semibold'>Choose Date</p>
-                    <div className='flex items-center gap-6 text-sm mt-5'>
+                    <div className='flex items-center md:gap-6 gap-2 text-sm mt-5'>
                         <ChevronLeftIcon width={28} />
                         <span className='grid grid-cols-3 md:flex flex-wrap md:max-w-lg gap-4'>
                             {Object.keys(dateTime)

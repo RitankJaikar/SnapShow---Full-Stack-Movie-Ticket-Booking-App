@@ -115,9 +115,9 @@ const SeatLayout = () => {
   }, [selectedTime])
 
   return show ? (
-    <div className='flex flex-col md:flex-row px-6 md:px-16 lg:px-40 py-30 md:pt-50'>
+    <div className='w-full flex flex-wrap px-6 gap-20 justify-center max-lg:justify-start md:px-16 lg:px-40 pb-10 pt-50'>
       {/* Available Timings */}
-      <div className='w-60 bg-primary/10 border border-primary/20 rounded-lg py-10 h-max md:sticky md:top-30'>
+      <div className='w-60 bg-primary/10 border border-primary/20 rounded-lg py-10 h-max'>
         <p className='text-lg font-semibold px-6'>Available Timings</p>
         <div className='mt-5 space-y-1'>
           {[...show.dateTime[date]]
@@ -132,24 +132,26 @@ const SeatLayout = () => {
       </div>
 
       {/* Seats Layout */}
-      <div className='relative flex-1 flex flex-col items-center max-md:mt-16'>
+      <div className='max-lg:w-full relative flex flex-col items-center justify-center'>
         <BlurCircle top="-100px" left="-100px" />
         <BlurCircle bottom="0" right="0" />
         <h1 className='text-2xl font-semibold mb-4'>Select your seat</h1>
         <img src={assets.screenImage} alt="screen" />
         <p className='text-gray-400 text-sm mb-6'>SCREEN SIDE</p>
 
-        <div className='flex flex-col items-center mt-10 text-xs text-gray-300'>
-          <div className='grid grid-cols-2 md:grid-cols-1 gap-8 md:gap-2 mb-6'>
-            {groupRows[0].map(row => renderSeats(row))}
-          </div>
+        <div className='w-full overflow-x-auto'>
+          <div className='min-w-[800px] flex flex-col items-center mt-10 text-xs text-gray-300'>
+            <div className='grid grid-cols-1 md:gap-2 mb-8'>
+              {groupRows[0].map(row => renderSeats(row))}
+            </div>
 
-          <div className='grid grid-cols-2 gap-11'>
-            {groupRows.slice(1).map((group, idx) => (
-              <div key={idx}>
-                {group.map(row => renderSeats(row))}
-              </div>
-            ))}
+            <div className='grid grid-cols-2 gap-11'>
+              {groupRows.slice(1).map((group, idx) => (
+                <div key={idx}>
+                  {group.map(row => renderSeats(row))}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
